@@ -1,4 +1,4 @@
-proc print data=work.police(obs=1000);
+proc print data=work.police(obs=100);
 RUN;
 
 DATA work.police;
@@ -12,8 +12,6 @@ set work.police;
 drop country_name search_type stop_date;
 run;
 
-proc print data=work.police(obs=1000);
-RUN;
 
 proc means data=work.police nmiss n;
 run;
@@ -25,6 +23,8 @@ data work.police;
      THEN 
       DELETE;
 run;
+
+
 
 proc sort data=work.police;
 by violation;
@@ -159,16 +159,24 @@ proc sgplot data=WORK.POLICE;
 	yaxis grid;
 run;
 
-DATA WORK.POLICE;
+DATA WORK.DRUGS;
 SET WORK.POLICE (WHERE=(drugs_related_stop = 'TRUE'));
 RUN;
 
 title 'Distributing the number of drugs related stop per driver race';
-proc sgplot data=WORK.DDEALERS;
+proc sgplot data=WORK.DRUGS;
 	vbar drugs_related_stop / group=driver_race groupdisplay=cluster datalabel
 	categoryorder=respdesc nostatlabel;
 	yaxis grid;
 run;
 
+DATA WORK.ARREST;
+SET WORK.POLICE (WHERE=(is_arrested = 'TRUE'));
+RUN;
 
-
+title 'Distributing the driver race with the most arrests';
+proc sgplot data=WORK.ARREST;
+	vbar is_arrested / group=driver_race groupdisplay=cluster datalabel
+	categoryorder=respdesc nostatlabel;
+	yaxis grid;
+run;
